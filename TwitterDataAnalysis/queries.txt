@@ -1,0 +1,87 @@
+--Tweets, users and languages
+--Question 1
+		--count combines Tweets, Retweets, Replies
+select count(tweet_id) from tweet;
+select * from tweet;
+--Question 2
+SELECT u.user_lang,count(t.tweet_id) FROM tweet t 
+	INNER JOIN tweeter_user u
+    ON t.user_id = u.user_id group by u.user_lang;
+--Question 3
+SELECT u.user_lang,
+	count(t.tweet_id)::decimal/(select count(tweet_id) from tweet) ,
+	count(u.user_id)::decimal/(select count(user_id) from tweeter_user)
+	FROM tweet t 
+	INNER JOIN tweeter_user u
+    ON t.user_id = u.user_id group by u.user_lang;
+
+
+--Retweeting habits
+--Question 1
+	-- No of Retweet
+select count(tweet_id) from tweet where retweet_count != 0;
+	-- Total tweets
+select count(tweet_id) from tweet;
+	-- fraction
+SELECT 
+  (select count(tweet_id) from tweet where retweet_count != 0)::decimal / 
+  (select count(tweet_id) from tweet) AS retweet_fraction
+
+--Question 2
+	-- avg per tweet
+select avg(retweet_count) into retweet_avg from tweet group by tweet_id;
+	-- total avg
+select avg(retweet_count) from tweet;
+	-- avg per tweet
+SELECT 
+  (select avg(retweet_count) from tweet)::decimal / 
+  (select count(tweet_id) from tweet) AS avg_retweet
+
+--Question 3
+	-- No of Tweets not Retweet
+select count(tweet_id) from tweet where retweet_count = 0;
+	-- Total tweets
+select count(tweet_id) from tweet;
+	-- fraction
+SELECT 
+  (select count(tweet_id) from tweet where retweet_count = 0)::decimal / 
+  (select count(tweet_id) from tweet) AS not_retweeted_fraction
+
+--Question 4
+	-- No of Tweets less than avg No of retweets
+select count(tweet_id) from tweet where retweet_count < (select avg(retweet_count) from tweet);
+	-- Total tweets
+select count(tweet_id) from tweet;
+	-- fraction
+SELECT 
+  (select count(tweet_id) from tweet where retweet_count < (select avg(retweet_count) from tweet))::decimal / 
+  (select count(tweet_id) from tweet) AS avg_retweet_fraction
+
+--Hashtags
+--Question 1
+select count(distinct(hashtag)) from Tweet_Hashtags;	
+					  
+--Question 2
+select distinct(hashtag),count(hashtag) from Tweet_Hashtags group by hashtag order by count(hashtag) desc limit 10;	
+					  
+--Question 3
+CREATE VIEW my_tags (user_id,hashtags) AS					  
+SELECT t.user_id, th.hashtag FROM Tweet_Hashtags th 
+	INNER JOIN tweet t
+    ON th.tweet_id = t.tweet_id ;
+															
+--Replies
+--Question 1
+select count(tweet_id) from tweet where in_reply_to_user_id is not null;
+
+--Question 2
+CREATE VIEW my_view (prob)AS
+	(select ((count(user_id)*(count(user_id)-1))/2)::decimal/
+	(select (count(user_id)*(count(user_id)-1))/2 from tweeter_user) 
+			 from tweeter_user group by user_lang);
+select sum(prob) from my_view;	
+	 
+--Question 3
+select sum(prob) from my_view;	
+	 
+

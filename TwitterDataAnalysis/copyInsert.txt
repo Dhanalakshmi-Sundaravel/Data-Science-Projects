@@ -1,0 +1,31 @@
+--  UTC & TimeZone
+insert into TimeZoneUTC(user_utc_offset,user_time_zone) 
+	select distinct user_utc_offset, user_time_zone from bad_giant_table 
+	where user_utc_offset is not null;
+--User
+insert into tweeter_user(
+	user_id,user_name,user_screen_name,user_time_zone,
+	user_followers_count,user_friends_count, user_lang, user_description,user_status_count,user_created_at )
+	select distinct user_id ,user_name ,user_screen_name,user_time_zone,
+	user_followers_count ,user_friends_count ,user_lang ,user_description ,user_status_count,user_created_at
+	FROM bad_giant_table;
+--Tweet
+insert into Tweet(
+	created_at,text,tweet_id,in_reply_to_status_id,in_reply_to_user_id,
+	retweet_count,tweet_source,retweet_of_tweet_id,user_id)
+	select created_at,text,tweet_id,in_reply_to_status_id,in_reply_to_user_id,
+	retweet_count,tweet_source,retweet_of_tweet_id,user_id
+	from bad_giant_table;
+-- Tweet HashTag
+insert into Tweet_Hashtags(tweet_id,hashtag)															
+	select tweet_id,hashtag1 from bad_giant_table where hashtag1 is not null;
+insert into Tweet_Hashtags(tweet_id,hashtag)															
+	select tweet_id,hashtag2 from bad_giant_table where hashtag2 is not null;
+insert into Tweet_Hashtags(tweet_id,hashtag)															
+	select tweet_id,hashtag3 from bad_giant_table where hashtag3 is not null;
+insert into Tweet_Hashtags(tweet_id,hashtag)															
+	select tweet_id,hashtag4 from bad_giant_table where hashtag4 is not null;
+insert into Tweet_Hashtags(tweet_id,hashtag)															
+	select tweet_id,hashtag5 from bad_giant_table where hashtag5 is not null;
+insert into Tweet_Hashtags(tweet_id,hashtag)															
+	select tweet_id,hashtag6 from bad_giant_table where hashtag6 is not null;

@@ -1,0 +1,36 @@
+-- UTC & TimeZone
+Create table TimeZoneUTC(
+	user_utc_offset integer,
+    user_time_zone character varying(127) PRIMARY KEY);
+--User 
+Create table tweeter_user(
+	user_id bigint PRIMARY KEY,
+    user_name character varying(255),
+    user_screen_name  character varying(255),
+    user_location character varying(255), 
+    user_time_zone character varying(127), 
+    user_followers_count integer,
+    user_friends_count integer,
+    user_lang character varying(10),
+    user_description varchar(255),
+    user_status_count varchar(255),
+    user_created_at timestamp with time zone,
+	FOREIGN KEY (user_time_zone) REFERENCES TimeZoneUTC(user_time_zone)); 
+--Tweet 
+Create table Tweet(
+	created_at timestamp with time zone,
+    text varchar(255),
+    tweet_id bigint PRIMARY KEY,
+    in_reply_to_status_id    bigint,
+    in_reply_to_user_id      bigint,
+    retweet_count int,
+    tweet_source  varchar(255),
+    retweet_of_tweet_id bigint,
+	user_id bigint,
+	FOREIGN KEY (user_id) REFERENCES tweeter_user(user_id));
+							
+-- Tweet HashTag
+create table Tweet_Hashtags(
+	tweet_id bigint,
+	hashtag varchar(144),
+	FOREIGN KEY (tweet_id) REFERENCES Tweet(tweet_id));
